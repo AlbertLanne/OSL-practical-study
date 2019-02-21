@@ -1,0 +1,45 @@
+float RecusNoise (
+    point TailleNoise ,
+    point Reference ,
+    int Profondeur 
+)
+{
+    // var local
+    point MonP = Reference ;  
+    point TailleVariable = TailleNoise ;
+    int ProfondeurCurrante  = 0 ;  
+    float NoiseCourant = 1.0 ;
+    for(ProfondeurCurrante ; ProfondeurCurrante < Profondeur ; ProfondeurCurrante++)
+    {
+       NoiseCourant *= noise("uperlin" , MonP);
+       TailleVariable *= 2.0 ;
+       MonP  *=  TailleVariable ;
+    }
+    return(NoiseCourant);
+}
+
+
+shader MonNoise(
+    color CouleurA = 0.0 ,  //parametre node
+    color CouleurB = 1.0 ,
+    color CouleurC = 0.5 ,
+    point Taille  = 1.0 ,
+    int Recursion = 10 ,
+    output closure color MatDiff = 0.0 , // node sortie
+    output closure color SortieSecours = 0.0 
+)
+{
+    // entrée du noise
+    point MonP = P / max(0.01 , Taille ) ;
+
+    
+    float NoiseZeroUn = RecusNoise( 1.0 , MonP, Recursion );
+
+    
+    
+    color CouleurSortie = NoiseZeroUn * CouleurA + ( 1.0 - NoiseZeroUn ) * CouleurB;
+    MatDiff = CouleurSortie * diffuse(N);
+    SortieSecours = NoiseZeroUn * emission(); 
+}
+
+

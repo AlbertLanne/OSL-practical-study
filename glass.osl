@@ -1,0 +1,28 @@
+
+shader Verre(
+    color Couleur = 1.0 ,
+    float QuantiteReflet = 0.2 ,
+    float DensiteInterne = 1.0 ,
+    float IndiceRefraction = 1.6 ,
+    output color MonVerre = 0.0 ,
+    output color Turbidite = 0.0 ,
+    output color SortieSecours = 0.0 ,
+    )
+{   
+    closure color Reflet = reflection(N);
+    closure color TranRefraction = Couleur * refraction(N, QuantiteReflet);
+    
+    float UsedQuantiteReflet = clamp ( QuantiteReflet , 0.0 , 1.0) ;
+    MonVerre = (1.0 - UsedQuantiteReflet ) * TranRefraction + UsedQuantiteReflet * Reflet ;
+    
+    
+    color CouleurTampon = color(1.0) - Couleur ;
+    
+    Turbidite = CouleurTampon * DensiteInterne * henyey_greenstein(0.0) ;
+    
+    SortieSecours = Reflet ;
+
+}
+
+
+
